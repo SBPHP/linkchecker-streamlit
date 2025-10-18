@@ -501,7 +501,7 @@ with st.expander("❓ Help / Tool Documentation", expanded=False):
     st.markdown("""
 ✅ What does the AI Link Checker tool do?
 
-AI Link Checker consists of three analyses:
+AI Link Checker consists of three analyses:\n \n
 	1.	Find internal links
 	•	Based on semantic similarity, it checks whether thematically related pages are already internally linked.
 	•	The tool also suggests meaningful internal links and evaluates their potential with a Link Potential Score. \n \n
