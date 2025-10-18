@@ -499,77 +499,21 @@ def build_related_auto(
 # =============================
 with st.expander("❓ Help / Tool Documentation", expanded=False):
     st.markdown("""
-## Was macht das Tool ONE Link Intelligence?
+✅ What does the AI Link Checker tool do?
 
-**ONE Link Intelligence** besteht aus zwei Analysen:  
+AI Link Checker consists of three analyses:
+	1.	Find internal links
+	•	Based on semantic similarity, it checks whether thematically related pages are already internally linked.
+	•	The tool also suggests meaningful internal links and evaluates their potential with a Link Potential Score.
+	2.	Identify irrelevant or weak links
+	•	Analyzes existing internal links and detects those that are topically irrelevant or weak.
+	•	The basis is semantic similarity combined with a simplified PageRank-Waster model (pages with many outlinks but few inlinks).
+	3.	Identify the most valuable SEO links (SEO Potential Links)
+	•	Automatically opens once analyses 1 and 2 are completed.
+	•	Identifies the strongest internal link sources (Gems) based on their link potential and suggests high-value content links to relevant target URLs.
+	•	For performance reasons, only visible after analyses 1 and 2 are completed.
 
-1. **Interne Links finden**  
-   - Auf Basis semantischer Ähnlichkeit wird geprüft, ob thematisch verwandte Seiten bereits intern miteinander verlinkt sind.  
-   - Das Tool schlägt zusätzlich sinnvolle interne Links vor und bewertet deren Potenzial mit einem **Linkpotenzial-Score**.  
-
-2. **Unpassende Links identifizieren**  
-   - Analysiert bestehende interne Links und erkennt solche, die thematisch unpassend or schwach sind.  
-   - Grundlage ist die semantische Ähnlichkeit sowie ein vereinfachter *PageRank-Waster-Ansatz* (Seiten mit vielen Outlinks, aber wenigen Inlinks).  
-
-3. **Wertvollsten Links aus SEO-Sicht identifizieren (SEO-Potenziallinks)**  - öffnet sich automatisch nachdem Analysen 1 und 2 abgeschlossen wurden 
-   - Ermittelt die **stärksten internen Linkgeber (Gems)** anhand des Linkpotenzials und listet **wertvolle, noch nicht vorhandene Content-Links** zu passenden Ziel-URLs.  
-   - Aus Performance-Gründen erst sichtbar **nach Abschluss von Analyse 1 & 2**.
-
-Alle drei Analysen zahlen direkt auf die **Optimierung deiner internen Verlinkung** ein.
-""")
-
-    st.markdown("""
-### 🔄 Input-fileen
-
-- **Option 1: URLs + Embeddings**  
-  Tabelle mit mindestens zwei Spalten:  
-  - **URL** (Spaltenname: z. B. URL, Address, Address, Page, Seite)  
-  - **Embeddings** (Spaltenname: z. B. Embedding, Embeddings, Vector). Werte können als JSON-Array ([0.1, 0.2, ...]) or durch Komma/Leerzeichen/;/| getrennt vorliegen.  
-
-- **Option 2: Related URLs**  
-  Tabelle mit mindestens drei Spalten:  
-  - **URL 1**, **URL 2**, **Ähnlichkeitswert (0–1)** (z. B. aus Screaming Frog *Massenexport → Inhalt → Semantisch ähnlich*).
-
-- Zusätzlich erforderlich:  
-  - **All Inlinks** (CSV/Excel, aus Screaming Frog: *Massenexport → Links → Alle Inlinks*) — enthält mindestens folgende Spalten: **Quelle/Source**, **Ziel/Destination**, optional **Linkposition/Link Position**. Weitere Spalten sind nicht erforderlich. **Tipp**: Lösche alle Linktypen, die keine Hyperlinks sind und die anderen Spalten vor dem Upload heraus, um eine geringere filegröße zu erzielen.
-  - **Linkmetriken** (CSV/Excel) — **erste 4 Spalten** in dieser Reihenfolge: **URL**, **Link-Score**, **Inlinks**, **Outlinks**  - Für den Link Score bitte nach dem Crawl im Screaming Frog die Crawl Analyse durchführen
-  - **Backlinks** (CSV/Excel) — **erste 3 Spalten** in dieser Reihenfolge: **URL**, **Backlinks**, **Referring Domains** - z. B. aus ahrefs exportieren
-
-- **Optional (für Analyse 3): Search-Console-Daten**  
-  file als **CSV/Excel** mit mindestens:  
-  - **URL**, **Impressions**  
-  *Optional:* **Clicks**, **Position** (für „Sprungbrett-URLs“).  
-  **Header-Erkennung (Reihenfolge egal):**  
-  - URL: `url`, `page`, `seite`, `address`, `adresse`  
-  - Impressions: `impressions`, `impressionen`, `impr`, `search impressions`, `impressions_total`  
-  - Clicks: `clicks`, `klicks`  
-  - Position: `position`, `avg position`, `average position`, `durchschnittliche position`, `durchschn. position`  
-  **Hinweise:** Impressions werden intern per `log1p` normalisiert; Position wird nur für den „Sprungbrett“-Score benötigt.
-
-💡 Wir beziehen alle Input-fileen, bis auf die Offpage-Daten (diese kommen aus Ahrefs), aus dem **Screaming Frog**. Hinweis: Es ist im Frog möglich, APIs (KI-Systeme und Search Console) anzubinden und so die Daten direkt in den Crawl zu holen.
-
-Hinweis: Spaltenerkennung ist tolerant gegenüber deutsch/englischen Varianten.  
-Trennzeichen (Komma/Semikolon) und Encodings (UTF-8/UTF-8-SIG/Windows-1252/Latin-1) werden automatisch erkannt.  
-URLs werden kanonisiert (Protokoll ergänzt, www. entfernt, Tracking-Parameter entfernt, Pfade vereinheitlicht).
-""")
-
-    st.markdown("""
-### ⚙️ Weighting (Linkpotenzial)
-
-Die Berechnung des Linkpotenzials basiert auf folgenden Faktoren:  
-
-- **Interner Link Score**  
-  Bewertet, wie wichtig eine Seite im internen Linkgraph ist (Empfehlung: Link Score in der Crawl-Analyse in Screaming Frog (im Anschluss an den Crawl) berechnen lassen). Je höher der Wert, desto stärker kann die Seite Linkpower weitergeben.  
-
-- **PageRank-Horder-Score**  
-  Was ist ein *PageRank-Horder*? Vereinfacht gesagt: Je mehr eingehende Links (intern & extern) und je weniger ausgehende Links eine URL hat, desto mehr Linkpower kann sie „vererben“. Das „Robin-Hood-Prinzip“ – take it from the rich, give it to the poor.  
-
-- **Backlinks** & **Referring Domains**  
-  Berücksichtigen externe Signale (Autorität/Vertrauen) der Quell-URL.  
-
-💡 **Interpretation des Linkpotenzial-Scores in den Output-fileen bei Analysen 1 und 3:**  
-Der Wert ist **relativ** – er zeigt im Verhältnis zu den anderen, wie lukrativ ein Link wäre bzw. wie lukrativ die URL als Linkgeber ist.  
-
+All three analyses directly contribute to optimizing your internal linking structure.
 """)
 
 # ===============================
@@ -711,8 +655,7 @@ emb_df = None
 
 if mode == "URLs + Embeddings":
     st.write(
-        "Lade eine file mit **URL** und **Embedding** (JSON-Array or Zahlen, getrennt durch Komma/Whitespace/;/|). "
-        "Zusätzlich werden **All Inlinks**, **Linkmetriken** und **Backlinks** benötigt."
+        "Upload a file with URL and embedding (JSON array or numbers separated by comma/whitespace/;/|). Additionally, all inlinks, link metrics, and backlinks are required."
     )
 
     up_emb = st.file_uploader(
