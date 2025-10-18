@@ -46,17 +46,6 @@ if "__gems_ph__" not in st.session_state:
 
 st.title("AI Link Checker")
 
-st.markdown(
-    """
-<div style="background-color: #f2f2f2; color: #000000; padding: 15px 20px; border-radius: 6px; font-size: 0.9em; max-width: 850px; margin-bottom: 1.5em; line-height: 1.5;">
-  Developed by <a href="https://www.linkedin.com/in/daniel-kremer-b38176264/" target="_blank">Daniel Kremer</a> von <a href="https://onebeyondsearch.com/" target="_blank">ONE Beyond Search</a> &nbsp;|&nbsp;
-  Folge mir auf <a href="https://www.linkedin.com/in/daniel-kremer-b38176264/" target="_blank">LinkedIn</a> für mehr SEO-Insights und Tool-Updates
-</div>
-<hr>
-""",
-    unsafe_allow_html=True,
-)
-
 # ===============================
 # Helpers
 # ===============================
@@ -591,40 +580,35 @@ with st.sidebar:
     st.header("Einstellungen")
 
     backend = st.radio(
-        "Matching-Backend (Auto-Switch bei Bedarf)",
+        "Matching backend (auto-switch if needed)",
         ["Exact (NumPy)", "Schnell (FAISS)"],
         index=0,
         horizontal=True,
-        help=("Bestimmt, wie semantische Nachbarn ermittelt werden (Cosine Similarity). "
-          "Mit **Auto-Switch**: Wenn NumPy voraussichtlich zu viel RAM braucht, "
-          "or FAISS nicht verfügbar ist, wird automatisch umgeschaltet.")
+        help=("Determines how semantic neighbors are identified (cosine similarity). With auto-switch: if NumPy is likely to use too much RAM or FAISS is not available, it will automatically switch.")
     )
     if not _faiss_available():
-        st.caption("FAISS ist hier nicht installiert – Auto-Switch nutzt ggf. NumPy.")
+        st.caption("FAISS is not installed – auto-switch may use NumPy instead.")
 
 
-    st.subheader("Weighting (Linkpotenzial)")
+    st.subheader("Weighting (Linking potential)")
     st.caption(
-        "Das Linkpotenzial gibt Aufschluss über die Lukrativität einer **URL** als Linkgeber. "
+        "Link potential indicates how valuable a URL is as a linking source."
     )
     w_ils = st.slider(
         "Interner Link Score",
         0.0, 1.0, 0.30, 0.01,
-        help=("Interner Link Score (Screaming Frog): PageRank-ähnliches Maß für interne Linkpopularität aus dem Crawl. "
-              "Höherer ILS ⇒ Quelle kann mehr interne Linkkraft vererben.")
+        help=("Internal Link Score (Screaming Frog): PageRank-like metric for internal link popularity based on the crawl. "
+              "Higher ILS ⇒ the source can pass on more internal link power.")
     )
     w_pr = st.slider(
         "PageRank-Horder-Score",
         0.0, 1.0, 0.35, 0.01,
-        help=("Was ist ein PageRank-Horder?\n\n"
-              "Je mehr eingehende Links (intern & extern) und je weniger ausgehende Links eine URL hat, "
-              "desto mehr Linkpower kann sie „vererben“. Das „Robin-Hood-Prinzip“ – take it from the rich, give it to the poor. "
-              "Solche URLs werden in der Linkpotenzial-Kalkulation höher priorisiert.")
+        help=("The more incoming links (internal & external) and the fewer outgoing links a URL has, the more link power it can pass on. The “Robin Hood principle” – take it from the rich, give it to the poor. Such URLs are given higher priority in the link potential calculation.")
     )
     w_rd = st.slider(
         "Referring Domains",
         0.0, 1.0, 0.20, 0.01,
-        help="Externe verweisende Domains der Quell-URL."
+        help="External referring domains of the source URL."
     )
     w_bl = st.slider(
         "Backlinks",
@@ -633,32 +617,30 @@ with st.sidebar:
     )
     w_sum = w_ils + w_pr + w_rd + w_bl
     if not math.isclose(w_sum, 1.0, rel_tol=1e-3, abs_tol=1e-3):
-        st.warning(f"Weightings-Summe = {w_sum:.2f} (sollte 1.0 sein)")
+        st.warning(f"Weightings-Sum = {w_sum:.2f} (sollte 1.0 sein)")
 
-    st.subheader("Thresholds & Limits (Related URLs Ermittlung)")
+    st.subheader("Thresholds & Limits (Related URLs Detection)")
     sim_threshold = st.slider(
-        "Ähnlichkeitsschwelle",
+        "Similarity threshold",
         0.0, 1.0, 0.80, 0.01,
-        help="Nur URL-Paare mit Cosine Similarity ≥ diesem Wert gelten als „related“."
+        help="Only URL pairs with cosine similarity ≥ this value are considered related."
     )
     max_related = st.number_input(
-        "Anzahl Related URLs",
+        "Related URL Count",
         min_value=1, max_value=50, value=10, step=1,
-        help="Wie viele semantisch ähnliche Seiten sollen pro Ziel-URL in die Analyse einbezogen werden?"
+        help="How many semantically similar pages should be included in the analysis per target URL?"
     )
 
     st.subheader("Link Removal")
     not_similar_threshold = st.slider(
-        "Unähnlichkeitsschwelle (schwache Links)",
+        "Lightweight links",
         0.0, 1.0, 0.60, 0.01,
-        help=("Interne Links gelten als schwach, wenn deren semantische Ähnlichkeit ≤ diesem Wert liegt. "
-              "Beispiel: 0.60 → alle Links ≤ 0.60 werden als potenziell zu entfernend gelistet.")
+        help=("Internal links are considered weak if their semantic similarity is ≤ this value. Example: 0.60 → all links ≤ 0.60 will be listed as potentially removable.")
     )
     backlink_weight_2x = st.checkbox(
-        "Backlinks/Ref. Domains doppelt gewichten",
+        "Backlinks/Ref. double counted",
         value=False,
-        help=("Erhöht den Dämpfungseffekt externer Autorität auf den Waster-Score. "
-              "Wenn aktiv, wirken Backlinks & Ref. Domains doppelt so stark.")
+        help=("Increases the damping effect of external authority on the Waster Score. When enabled, backlinks and referring domains count twice as much.")
     )
 
 # etwas CSS für den roten Button (wir nutzen ihn später für „Let's Go“)
@@ -715,13 +697,13 @@ div[data-testid="stContainer"] > div:has(> .stSlider) {
 # Data ingestion
 # ===============================
 st.markdown("---")
-st.subheader("Daten laden")
+st.subheader("Load Data")
 
 mode = st.radio(
-    "Inputmodus",
+    "Input mode",
     ["URLs + Embeddings", "Related URLs"],
     horizontal=True,
-    help="Entweder Upload embeddings (App berechnet 'Related URLs') or bereits vorliegende 'Related URLs' nutzen.",
+    help="Either upload embeddings (the app will calculate ‘Related URLs’) or use already available ‘Related URLs’.",
 )
 
 related_df = inlinks_df = metrics_df = backlinks_df = None
