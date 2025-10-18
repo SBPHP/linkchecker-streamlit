@@ -504,10 +504,10 @@ with st.expander("❓ Help / Tool Documentation", expanded=False):
 AI Link Checker consists of three analyses:
 	1.	Find internal links
 	•	Based on semantic similarity, it checks whether thematically related pages are already internally linked.
-	•	The tool also suggests meaningful internal links and evaluates their potential with a Link Potential Score.
+	•	The tool also suggests meaningful internal links and evaluates their potential with a Link Potential Score. \n \n
 	2.	Identify irrelevant or weak links
 	•	Analyzes existing internal links and detects those that are topically irrelevant or weak.
-	•	The basis is semantic similarity combined with a simplified PageRank-Waster model (pages with many outlinks but few inlinks).
+	•	The basis is semantic similarity combined with a simplified PageRank-Waster model (pages with many outlinks but few inlinks). \n \n
 	3.	Identify the most valuable SEO links (SEO Potential Links)
 	•	Automatically opens once analyses 1 and 2 are completed.
 	•	Identifies the strongest internal link sources (Gems) based on their link potential and suggests high-value content links to relevant target URLs.
