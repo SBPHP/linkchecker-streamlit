@@ -870,7 +870,7 @@ if run_clicked:
 if run_clicked or st.session_state.ready:
     if mode == "URLs + Embeddings":
         if emb_df is None or any(df is None for df in [inlinks_df, metrics_df, backlinks_df]):
-            st.error("Please upload all required files (Embeddings, All Inlinks, Linkmetriken, Backlinks).")
+            st.error("Bitte alle benötigten Dateien hochladen (Embeddings, All Inlinks, Linkmetriken, Backlinks).")
             st.stop()
 
         if emb_df is not None and not emb_df.empty:
@@ -1455,7 +1455,7 @@ if not st.session_state.get("__gems_loading__", False):
             placeholder.empty()
         except Exception:
             pass
-        st.success("✅ Computation completed!")
+        st.success("✅ Calculation complete!")
         st.session_state.ready = True
 
 
@@ -1463,7 +1463,7 @@ if not st.session_state.get("__gems_loading__", False):
 # Analyse 3: Gems & „Cheat-Sheet der internen Verlinkung“ (Similarity × PRIO, ohne Opportunity)
 # =========================================================
 st.markdown("---")
-st.subheader("Analysis 3: Identify Strong Link Sources (Gems) and Valuable SEO Links („Gems“) & welche URLs diese verlinken sollten (⇒ SEO-Potenziallinks)")
+st.subheader("Analysis 3: Identify Strong Link Sources („Gems“) & welche URLs diese verlinken sollten (⇒ SEO-Potenziallinks)")
 st.caption("Diese Analyse identifiziert die aus SEO-Gesichtspunkten wertvollsten, aber noch nicht gesetzten, Content-Links.")
 
 # >>> HIER EINFÜGEN: Loader-GIF für Analyse 3 <<<
