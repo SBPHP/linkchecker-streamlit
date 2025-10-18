@@ -24,7 +24,7 @@ def bordered_container():
 # ===============================
 # Page config & Branding
 # ===============================
-st.set_page_config(page_title="ONE Link Intelligence", layout="wide")
+st.set_page_config(page_title="AI Link Checker", layout="wide")
 
 # Session-State initialisieren (für persistente Outputs)
 if "ready" not in st.session_state:
@@ -44,16 +44,7 @@ if "__ready_gems__" not in st.session_state:
 if "__gems_ph__" not in st.session_state:
     st.session_state["__gems_ph__"] = st.empty()
 
-# Load remote logo robustly (failsafe) (kein Crash, wenn Bild nicht geht)
-try:
-    st.image(
-        "https://onebeyondsearch.com/img/ONE_beyond_search%C3%94%C3%87%C3%B4gradient%20%282%29.png",
-        width=250,
-    )
-except Exception:
-    pass
-
-st.title("ONE Link Intelligence")
+st.title("AI Link Checker")
 
 st.markdown(
     """
